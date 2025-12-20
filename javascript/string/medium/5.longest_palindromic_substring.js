@@ -1,24 +1,38 @@
 /**
+ * @description ý tưởng thuật toán
+ * - palindrome luôn đối xứng quanh 1 tâm
+ * - aba thì đối xứng quanh tâm b
+ * - abba thì đối xứng quanh tâm bb
+ * ==> nếu chẵn thì đối xứng quan tâm l, l + 1 còn ngược lại nếu lẻ đổi xứng quanh 1 tâm l
+ * - mở rồng l-- và r++ sang 2 phía lăp nếu l >= 0 && r < s.length và s[l] phải bằng s[r]
+ * - r - l + 1 > maxLen:
+ *  l = 1 , r = 2 , substr = "bb" => 2 - 1 + 1 = 2
+ *  l = 0 , r = 3 , substr = "abba" => 3 - 0 + 1 = 4
+ *  nếu > maxLen => r = l ( vì đang đi từ trái qua phải ) sau đó cập nhật lại maxLen
  * @param {string} s
  * @return {string}
  */
-var longestPalindrome = function(s) {
-  if (s.length == 1 || s == (s.split('').reverse()).join('')) return s
-  let output = ""
-  let left = 0
-  for (left; left < s.length;) {
-    let right = left + 1
-    temp = s[left]
-    while(s[left] != s[right] && left < s.length && right < s.length) {
-      temp += s[right]
-      right++
+
+var longestPalindrome = function (s) {
+  if (s.length < 2) return s // nếu chuỗi có độ dài nhỏ hơn 2 trả về luôn
+  let start = 0
+  let maxLen = 1
+  const process = (l, r) => {
+    while (l >= 0 && r < s.length && s[l] == s[r]) {
+      if (r - l + 1 > maxLen) {
+        start = l
+        maxLen = r - l + 1
+      }
+      l--;
+      r++;
     }
-    temp += s[right] ? s[right] : ''
-    if (temp.length > output.length && temp == (temp.split('').reverse()).join('')) output = temp
-    left++
   }
-  return output[0] !== output[output.length - 1] ? output[0] : output
+  for (let i = 0; i < s.length; i++) {
+    process(i, i)
+    process(i, i + 1)
+  }
+  return s.substring(start, start + maxLen)
 };
 
-let s = "abbcccba"
+let s = "ac"
 console.log(longestPalindrome(s))
